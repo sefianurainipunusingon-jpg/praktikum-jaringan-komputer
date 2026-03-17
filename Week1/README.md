@@ -1,4 +1,4 @@
-Berikut teksnya, sudah dipisahkan per langkah supaya bisa langsung kamu salin 👇
+
 
 ---
 
