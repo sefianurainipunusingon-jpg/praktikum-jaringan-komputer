@@ -1,45 +1,52 @@
-# Laporan Analisis Protokol DNS: `nslookup -type=NS mit.edu`
+# Laporan Praktikum Jaringan Komputer - nslookup
 
-Berdasarkan hasil tangkapan layar (screenshot) dari terminal dan Wireshark yang dilampirkan, berikut adalah analisis detail mengenai kueri DNS tersebut:
-
----
-
-## 1. Alamat IP Tujuan Permintaan DNS
-* **IP Tujuan:** Pesan permintaan DNS dikirim ke alamat IP **10.0.2.3**.
-    * Hal ini terlihat pada ![](Asset3/file1.png) di bagian `Address: 10.0.2.3#53`.
-    * Pada ![](Asset3/file2.png) (Wireshark), terlihat paket pertama memiliki *Destination* `10.0.2.3`.
-* **Default DNS Server:** **Ya**, ini adalah DNS server lokal Anda. Pada ![](Asset3/file3.png) (hasil `ipconfig`), alamat IP komputer Anda adalah `192.168.56.1`, yang berada dalam jaringan privat, dan sistem Anda dikonfigurasi untuk bertanya pada resolver lokal di `10.0.2.3`.
-
-## 2. Pemeriksaan Pesan Permintaan (DNS Query)
-Berdasarkan ![](Asset3/file4.png) yang menunjukkan detail paket kueri:
-* **Jenis (Type):** Pesan tersebut bertipe **NS (Authoritative Name Server)**.
-* **Kandungan "Answers":** Pesan permintaan tersebut **tidak mengandung "Answers"**.
-    * Pada detail protokol terlihat: `Questions: 1`, `Answer RRs: 0`, `Authority RRs: 0`.
-    * **Penjelasan:** Sebuah *query* hanya berisi pertanyaan. Jawaban hanya akan muncul pada paket *response* (balasan) dari server.
-
-
-
-## 3. Pemeriksaan Pesan Balasan (DNS Response)
-Berdasarkan `file1.png` dan detail pada `file5.png`:
-* **Nama Server MIT:** Server MIT dikelola oleh layanan Akamai. Nama-nama server yang diberikan antara lain:
-    * `asia1.akam.net`
-    * `usw2.akam.net`
-    * `ns1-37.akam.net`
-    * `use5.akam.net`
-    * `eur5.akam.net`
-    * `use2.akam.net`
-    * `asia2.akam.net`
-    * `ns1-173.akam.net`
-* **Alamat IP Server:** **Ya**, pesan balasan memberikan alamat IP.
-    * Pada ![](Asset3/file1.png), bagian **"Authoritative answers can be found from"** mencantumkan IPv4 (Internet Address). Contoh: `eur5.akam.net` adalah `23.74.25.64`.
-    * Pada ![](Asset3/file5.png), terlihat adanya **"Additional records"** sebanyak 10 buah, yang biasanya berisi alamat IP (Glue Records) agar komputer bisa langsung menghubungi Name Server tersebut.
+**Nama:** Galang Samudra  
+**Instansi:** Telkom University Surabaya  
+**Tools:** Windows PowerShell / Command Prompt (`nslookup`)
 
 ---
 
-## Tutorial Replikasi Percobaan
-1.  **Persiapan:** Buka Wireshark dan mulai *capture* pada interface yang aktif.
-2.  **Filter:** Masukkan kata kunci `dns` pada kolom filter Wireshark agar trafik lain tidak mengganggu.
-3.  **Eksekusi:** Buka Terminal/CMD, ketik `nslookup -type=NS mit.edu`.
-4.  **Analisis:**
-    * Klik pada paket **Query** (arah keluar) untuk melihat pertanyaan Anda.
-    * Klik pada paket **Response** (arah masuk) untuk melihat daftar Name Server dan alamat IP-nya di bagian *Answers* atau *Additional Records*.
+## 1. Alamat IP Server Web di Asia
+**Pertanyaan:** Jalankan `nslookup` untuk mendapatkan alamat IP dari server web di Asia. Berapa alamat IP server tersebut?
+
+**Hasil Analisis:**
+Berdasarkan pengujian pada domain pemerintah Indonesia (`www.jombangkab.go.id`), didapatkan hasil sebagai berikut:
+
+* **Command:** `nslookup www.jombangkab.go.id`
+* **Alamat IPv4:** `103.225.242.140`
+* **Alamat IPv6:** `64:ff9b::67e1:f28c`
+
+![Screenshot Jawaban No 1](Asset2/Gambar1.png)
+
+---
+
+## 2. Server DNS untuk Universitas di Eropa
+**Pertanyaan:** Jalankan `nslookup` agar dapat mengetahui server DNS otoritatif untuk universitas di Eropa.
+
+**Hasil Analisis:**
+Pengujian dilakukan terhadap Universitas Oxford (`www.ox.ac.uk`). Hasil menunjukkan bahwa domain tersebut menggunakan layanan Cloudflare sebagai bagian dari infrastruktur distribusinya.
+
+* **Command:** `nslookup www.ox.ac.uk`
+* **Nama Alias (CNAME):** `www.ox.ac.uk.cdn.cloudflare.net`
+* **Alamat IP yang Terdeteksi:** * `172.66.169.161`
+    * `104.20.34.13`
+
+![Screenshot Jawaban No 1](Asset2/Gambar2.png)
+
+---
+
+## 3. Informasi Server Email (MX Record) Yahoo! Mail
+**Pertanyaan:** Jalankan `nslookup` untuk mencari tahu informasi mengenai server email dari Yahoo! Mail melalui salah satu server yang didapatkan di pertanyaan nomor 2. Apa alamat IP-nya?
+
+**Hasil Analisis:**
+Perintah dijalankan dengan menentukan tipe query `mx` (Mail Exchanger) untuk domain `yahoo.com` menggunakan DNS server `ns1.yahoo.com`.
+
+* **Command:** `nslookup -type=mx yahoo.com ns1.yahoo.com`
+* **Server DNS yang Digunakan:** `ns1.yahoo.com`
+* **Alamat IP Server DNS tersebut:** `68.180.131.16`
+* **Daftar Mail Exchanger (MX):**
+    1.  `mta6.am0.yahoodns.net` (Preference = 1)
+    2.  `mta5.am0.yahoodns.net` (Preference = 1)
+    3.  `mta7.am0.yahoodns.net` (Preference = 1)
+
+![Screenshot Jawaban No 1](Asset2/Gambar3.png)
