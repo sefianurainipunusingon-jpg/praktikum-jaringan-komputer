@@ -10,3 +10,6 @@ Kelebihan: Menawarkan kecepatan transfer data yang lebih tinggi dengan tingkat g
 Kekurangan: Cakupan sinyal lebih terbatas dan performanya dapat menurun ketika terhalang oleh dinding atau material padat lainnya.
 14.3 Bingkai Suar
 <img width="1920" height="1080" alt="week14-01" src="https://github.com/user-attachments/assets/a96c46a3-3785-4d33-923e-d7327f153e9e" />
+Kemudian gunakan filter "wlan.fc.subtype == 8", untuk menampilkan Beacon Frames (bingkai suar) dalam lalu lintas jaringan nirkabel (Wi-Fi).
+  
+  
